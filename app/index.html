@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SortSense — point, scan, sort right</title>
+<meta name="description" content="SortSense tells you whether an item is recyclable, which bin it goes in, and what to do with it. Scan a barcode, snap a photo, or search the guide.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <span class="tagline">Arbiter Hacks V1 &middot; Theme: Rethinking Waste</span>
+    <h1>Sort<span>Sense</span></h1>
+    <p>Point, scan, sort right. Find out in seconds whether something is recyclable, which bin it goes in, and what to do with the parts that are not.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="tabs" role="tablist" aria-label="Ways to check an item">
+    <button class="tab active" data-tab="scan" role="tab">Scan a barcode</button>
+    <button class="tab" data-tab="photo" role="tab">Photo check</button>
+    <button class="tab" data-tab="guide" role="tab">What goes where</button>
+    <button class="tab" data-tab="impact" role="tab">My impact</button>
+  </nav>
+
+  <!-- SCAN -->
+  <section class="panel active" id="panel-scan">
+    <div class="card">
+      <h2>Scan a barcode</h2>
+      <p>Type the barcode number from the pack, or use your camera if your browser supports it. We look the product up in Open Food Facts, the open product database, and break down every part of the packaging.</p>
+      <div class="row">
+        <input type="text" id="barcode" inputmode="numeric" placeholder="e.g. 3017620422003 (Nutella)" aria-label="Barcode number">
+        <button id="lookupBtn">Look it up</button>
+        <button class="secondary" id="camBtn">Use camera</button>
+      </div>
+      <div id="camBox" class="hidden" style="margin-top:12px">
+        <video id="cam" class="cam" autoplay playsinline></video>
+        <div class="row" style="margin-top:8px">
+          <button class="small secondary" id="camStop">Stop camera</button>
+        </div>
+      </div>
+      <div class="status" id="scanStatus"></div>
+      <div class="chips" id="demoChips" aria-label="Try a demo product"></div>
+    </div>
+    <div class="card hidden" id="resultCard">
+      <div class="result-head">
+        <img id="resImg" alt="" class="hidden">
+        <div>
+          <h2 id="resName"></h2>
+          <div id="resVerdicts"></div>
+          <p class="src" id="resSrc"></p>
+        </div>
+      </div>
+      <div id="resParts" style="margin-top:12px"></div>
+      <div class="overall" id="resOverall"></div>
+      <div class="row" style="margin-top:14px">
+        <button id="logBtn">Log this as recycled</button>
+      </div>
+      <p class="muted" style="margin-top:10px">Logging is an estimate. It uses the weight and material of each recyclable part, and simplified EPA WARM style factors for CO2 avoided.</p>
+    </div>
+  </section>
+
+  <!-- PHOTO -->
+  <section class="panel" id="panel-photo">
+    <div class="card">
+      <h2>Photo check <span class="muted" style="font-weight:400">(beta)</span></h2>
+      <p>Take a photo of an item and SortSense will guess what it is made of. The model runs entirely on your device, nothing is uploaded. It is a best guess, so always double check with the guide below.</p>
+      <label class="drop" for="photoInput">
+        <strong>Tap here to choose a photo</strong><br>
+        <span class="muted">or drag one onto this box</span>
+        <input type="file" id="photoInput" accept="image/*">
+      </label>
+      <div class="status" id="photoStatus">Model loads on first use, about a few seconds.</div>
+      <img id="photoPreview" class="preview hidden" alt="Your photo">
+      <div id="photoResults"></div>
+    </div>
+  </section>
+
+  <!-- GUIDE -->
+  <section class="panel" id="panel-guide">
+    <div class="card">
+      <h2>What goes where</h2>
+      <p>Search everyday items. Rules vary by city, so this is a general guide. When in doubt, check your city recycling page.</p>
+      <input type="search" id="guideSearch" placeholder="Search, e.g. pizza box, battery, yogurt tub" aria-label="Search the guide">
+      <div class="chips" id="guideFilters"></div>
+      <div id="guideList"></div>
+    </div>
+  </section>
+
+  <!-- IMPACT -->
+  <section class="panel" id="panel-impact">
+    <div class="card">
+      <h2>My impact</h2>
+      <p>Everything you log is saved on this device only. No account, no tracking, no data leaves your browser.</p>
+      <div class="stats">
+        <div class="stat"><div class="num" id="stItems">0</div><div class="lbl">items recycled</div></div>
+        <div class="stat"><div class="num" id="stCo2">0 kg</div><div class="lbl">CO2 avoided (est.)</div></div>
+        <div class="stat"><div class="num" id="stKg">0 kg</div><div class="lbl">kept out of landfill</div></div>
+        <div class="stat"><div class="num" id="stDays">0</div><div class="lbl">days with a log</div></div>
+      </div>
+      <ul class="log-list" id="logList"></ul>
+      <p class="muted" id="logEmpty">Nothing logged yet. Scan a barcode or check a photo, then log the item.</p>
+      <div class="row" style="margin-top:12px">
+        <button class="small secondary" id="clearLog">Clear my log</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Why this matters</h2>
+      <p>About a quarter of what people put in recycling bins does not belong there. One greasy box or plastic bag can send a whole truckload to landfill instead. Sorting right is the cheapest climate action there is: it costs nothing, takes seconds, and keeps real materials in use.</p>
+      <p class="muted">Sources: Open Food Facts for product and packaging data; impact factors are simplified estimates based on US EPA WARM. Packaging rules differ by city, always check local guidance for the final word.</p>
+    </div>
+  </section>
+
+  <footer>
+    SortSense is a hackathon project for Arbiter Hacks V1. Built with open data from
+    <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener">Open Food Facts</a>.
+    Photo check uses MobileNet running in your browser via TensorFlow.js.
+    <a href="https://github.com/slowwwkiss/sortsense" target="_blank" rel="noopener">Source code on GitHub</a>.
+  </footer>
+</main>
+
+<script src="vendor/tf.min.js"></script>
+<script src="vendor/mobilenet/mobilenet.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
